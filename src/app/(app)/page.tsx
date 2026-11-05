@@ -4,7 +4,6 @@ import ScoreRecorder from "@/components/ScoreRecorder";
 import { getCurrentUser } from "@/lib/auth";
 import { isValidRecordDate, todayInTokyo } from "@/lib/dates";
 import { getEntry } from "@/lib/entries";
-import { logout } from "./actions";
 
 export default function Home({ searchParams }: PageProps<"/">) {
   return (
@@ -33,14 +32,6 @@ async function RecordScreen({ searchParams }: { searchParams: PageProps<"/">["se
 
       {/* 人や日付が変わったら作り直す（前の人・前の日の点数が残らないように。課題①の反省） */}
       <ScoreRecorder key={`${user.id}:${date}`} date={date} savedScore={entry?.score ?? null} />
-
-      {/* いちばん下。設定画面（S8）ができたら、そちらへ移す */}
-      <footer className="mt-auto flex items-center justify-between gap-2 border-t border-foreground/10 pt-3 text-sm text-foreground/60">
-        <span className="truncate">ログイン中：{user.email}</span>
-        <form action={logout}>
-          <button className="h-11 shrink-0 rounded-xl px-3 underline">ログアウト</button>
-        </form>
-      </footer>
     </div>
   );
 }

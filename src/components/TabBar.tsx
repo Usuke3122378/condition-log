@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 const TABS = [
   { href: "/", label: "記録", icon: "✎" },
   { href: "/graph", label: "グラフ", icon: "📈" },
+  { href: "/settings", label: "設定", icon: "⚙" },
 ] as const;
 
 /** 画面の下に固定するタブ。今いるタブは色を濃くする */
@@ -17,7 +18,7 @@ export default function TabBar() {
       aria-label="画面の切り替え"
       className="fixed inset-x-0 bottom-0 z-30 border-t border-foreground/10 bg-white pb-[env(safe-area-inset-bottom)]"
     >
-      <ul className="mx-auto grid h-16 max-w-md grid-cols-2">
+      <ul className="mx-auto grid h-16 max-w-md grid-cols-3">
         {TABS.map((tab) => {
           const active = tab.href === "/" ? pathname === "/" : pathname.startsWith(tab.href);
           return (

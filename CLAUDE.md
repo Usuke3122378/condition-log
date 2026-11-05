@@ -57,7 +57,7 @@ npm run lint    # ESLint（flat config: eslint.config.mjs）
 | `/settings`（`/settings/sharing`） | ログアウト・CSV・全削除・アカウント削除・相談窓口・サンプルデータ／共有の管理 |
 | `/invite/[招待コード]`・`/shared/[共有ID]` | 家族が招待を受ける・点数のグラフを見る（見るだけ） |
 
-ログイン後の画面は `src/app/(app)/` にまとめ、`(app)/layout.tsx` の下のタブ（`src/components/TabBar.tsx`）で行き来する。今は記録・グラフの2つ。まとめ（v1.0）・設定（S8）を足して4つにする。`/login` はタブなし。
+ログイン後の画面は `src/app/(app)/` にまとめ、`(app)/layout.tsx` の下のタブ（`src/components/TabBar.tsx`）で行き来する。今は記録・グラフ・設定の3つ。まとめ（v1.0）を足して4つにする。CSV は `src/app/(app)/settings/export/route.ts`。サンプルデータは `src/lib/sample.ts`（スクショはサンプルで撮る）。`/login` はタブなし。
 
 ## 設計の芯（UI・文言で間違えやすい所）
 

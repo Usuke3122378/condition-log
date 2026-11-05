@@ -70,6 +70,44 @@ export async function saveEntry(date: string, score: number): Promise<Entry> {
   return data;
 }
 
+/** 自分の全記録を、日付の古い順に読む（CSV 用） */
+export async function getAllEntries(): Promise<Entry[]> {
+  const user = await getCurrentUser();
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("entries")
+    .select("date, score")
+    .eq("user_id", user.id)
+    .order("date", { ascending: true });
+
+  if (error) throw new Error(`記録を読めませんでした（${error.code}）`);
+  return data;
+}
+
+/** 自分の全記録を消す。消した件数を返す */
+export async function deleteAllEntries(): Promise<number> {
+  const user = await getCurrentUser();
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("entries").delete().eq("user_id", user.id).select("id");
+
+  if (error) throw new Error(`記録を消せませんでした（${error.code}）`);
+  return data.length;
+}
+
+/** サンプルの記録を入れる。すでに記録がある日は上書きしない。入れた件数を返す */
+export async function addSampleEntries(entries: Entry[]): Promise<number> {
+  const user = await getCurrentUser();
+  const supabase = await createClient();
+  const rows = entries.filter((e) => isValidScore(e.score)).map((e) => ({ user_id: user.id, ...e }));
+  const { data, error } = await supabase
+    .from("entries")
+    .upsert(rows, { onConflict: "user_id,date", ignoreDuplicates: true })
+    .select("id");
+
+  if (error) throw new Error(`サンプルを入れられませんでした（${error.code}）`);
+  return data.length;
+}
+
 /** その日の自分の記録を消す */
 export async function deleteEntry(date: string): Promise<void> {
   const user = await getCurrentUser();
