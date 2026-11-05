@@ -35,6 +35,22 @@ export async function getEntry(date: string): Promise<Entry | null> {
   return data;
 }
 
+/** from から to まで（両方含む）の自分の記録を、日付の古い順に読む */
+export async function getEntriesBetween(from: string, to: string): Promise<Entry[]> {
+  const user = await getCurrentUser();
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("entries")
+    .select("date, score")
+    .eq("user_id", user.id)
+    .gte("date", from)
+    .lte("date", to)
+    .order("date", { ascending: true });
+
+  if (error) throw new Error(`記録を読めませんでした（${error.code}）`);
+  return data;
+}
+
 /** その日の自分の記録を保存する（なければ追加、あれば上書き） */
 export async function saveEntry(date: string, score: number): Promise<Entry> {
   if (!isValidScore(score)) throw new Error("点数は0〜100の整数にしてください");

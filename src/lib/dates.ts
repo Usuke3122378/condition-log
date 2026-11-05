@@ -32,6 +32,18 @@ export function recordHref(date: string, today: string): string {
   return date === today ? "/" : `/?date=${date}`;
 }
 
+/** from から to まで（両方含む）の日付を1日ずつ並べる */
+export function datesBetween(from: string, to: string): string[] {
+  const dates: string[] = [];
+  for (let d = from; d <= to; d = addDays(d, 1)) dates.push(d);
+  return dates;
+}
+
+/** "2026-11-05" を「11/5」の形にする（グラフの目盛り用） */
+export function formatShortDate(date: string): string {
+  return `${Number(date.slice(5, 7))}/${Number(date.slice(8, 10))}`;
+}
+
 /** "2026-11-05" を「11月5日（木）」の形にする */
 export function formatJapaneseDate(date: string): string {
   const [y, m, d] = date.split("-").map(Number);

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { deleteScore, recordScore } from "@/app/record-actions";
+import { deleteScore, recordScore } from "@/app/(app)/record-actions";
 import { formatJapaneseDate } from "@/lib/dates";
 
 const DEFAULT_SCORE = 50;

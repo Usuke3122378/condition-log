@@ -48,6 +48,11 @@ body {
   }
 }
 
+/* グラフの点を指で押したときに出る青い四角い枠を消す（キーボードで操作するときの枠は残す） */
+.recharts-wrapper :focus:not(:focus-visible) {
+  outline: none;
+}
+
 /* 点数のスライダー：指で動かしやすいよう、つまみを大きく（高さ 44px の範囲で触れる） */
 .score-slider {
   -webkit-appearance: none;

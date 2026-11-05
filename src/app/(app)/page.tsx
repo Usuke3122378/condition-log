@@ -8,7 +8,7 @@ import { logout } from "./actions";
 
 export default function Home({ searchParams }: PageProps<"/">) {
   return (
-    <main className="mx-auto w-full max-w-md flex-1 px-4 py-6">
+    <main className="mx-auto flex w-full max-w-md flex-1 flex-col px-4 py-6">
       {/* ログインの確認や URL の日付は「アクセスのたび」に読むので、Suspense の中でする（この版の Next.js のきまり） */}
       <Suspense fallback={<p className="py-10 text-center text-foreground/60">読みこみ中…</p>}>
         <RecordScreen searchParams={searchParams} />
@@ -28,7 +28,7 @@ async function RecordScreen({ searchParams }: { searchParams: PageProps<"/">["se
   const entry = await getEntry(date);
 
   return (
-    <div className="flex min-h-[calc(100dvh-3rem)] flex-col gap-6">
+    <div className="flex flex-1 flex-col gap-6">
       <DateNav date={date} today={today} />
 
       {/* 人や日付が変わったら作り直す（前の人・前の日の点数が残らないように。課題①の反省） */}
