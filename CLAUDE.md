@@ -25,7 +25,7 @@ npm run lint    # ESLint（flat config: eslint.config.mjs）
   - `next.config.ts` で `cacheComponents: true` と `partialPrefetching: true` が有効。データ取得・キャッシュの書き方はこの前提でドキュメントを確認する。**ログイン中のユーザーごとに違うデータを、ユーザー間で共有されるキャッシュに入れない**
   - Tailwind は `@tailwindcss/turbopack` ローダー経由（`next.config.ts` の `turbopack.rules`）。`globals.css` で `@import "tailwindcss"`、テーマは `@theme inline`
 - パスエイリアス：`@/*` → `src/*`
-- 予定（S3 以降で導入）：Supabase Auth（メール・パスワード → Google）＋ Supabase（PostgreSQL・東京リージョン）＋ RLS。グラフは無料のライブラリ（Recharts など）
+- 予定（S3 以降で導入）：Supabase Auth（メール・パスワード → Google）＋ Supabase（PostgreSQL・シンガポール `ap-southeast-1`）＋ RLS。グラフは無料のライブラリ（Recharts など）
 
 ## 全体アーキテクチャ（要件定義書 §1・§4・§6 より）
 
