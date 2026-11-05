@@ -38,6 +38,10 @@ npm run lint    # ESLint（flat config: eslint.config.mjs）
 1. **サーバー側**：データを読み書きするすべての処理で、サーバー側で Supabase に「ログイン中のユーザー」を確かめる。**ユーザー ID をブラウザから受け取らない**
 2. **データベース側**：すべての表で RLS を有効にする。本人＝自分の行を読む・書く・消す／共有中の家族＝本人の `entries`（点数）を**読むだけ**／それ以外＝何も読めない
 
+- **ログインの確認は `src/lib/auth.ts` の `getCurrentUser()` を使う**（サーバー側で `getClaims()`。いなければ /login へ）。ページでは `<Suspense>` の中の部品で呼ぶ。`src/proxy.ts`（`src/lib/supabase/proxy.ts`）はログイン情報の更新と目安の移動だけで、権限チェックの代わりにしない
+- Supabase の接続：サーバーは `src/lib/supabase/server.ts` の `createClient()`（リクエストごとに作る）
+- **表を足すときは RLS と GRANT をセットで書く**（`supabase/migrations/` に番号付きで残す）。新しいプロジェクトは新しい表に権限が自動で付かない。確認は `node --env-file=.env.local scripts/check-rls.mjs`
+- 確認テスト用のダミーアカウント（A・C）の情報は `.env.test.local`（GitHub に載らない）。チャットや記事にパスワードを書かない
 - 家族に点数だけ見せるため、**メモ（`memos`）・印（`marks`）は `entries` と別の表**にする（RLS は行単位なので、見せたくない項目は表を分ける）
 - 招待コードはハッシュで保存し、1回限り・7日で無効
 - Supabase の管理用キー（service role key）はアカウント削除（F-17）でだけ、サーバー側で使う
