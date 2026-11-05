@@ -41,7 +41,7 @@ npm run lint    # ESLint（flat config: eslint.config.mjs）
 - **ログインの確認は `src/lib/auth.ts` の `getCurrentUser()` を使う**（サーバー側で `getClaims()`。いなければ /login へ）。ページでは `<Suspense>` の中の部品で呼ぶ。`src/proxy.ts`（`src/lib/supabase/proxy.ts`）はログイン情報の更新と目安の移動だけで、権限チェックの代わりにしない
 - Supabase の接続：サーバーは `src/lib/supabase/server.ts` の `createClient()`（リクエストごとに作る）
 - **表を足すときは RLS と GRANT をセットで書く**（`supabase/migrations/` に番号付きで残す）。新しいプロジェクトは新しい表に権限が自動で付かない。確認は `node --env-file=.env.local scripts/check-rls.mjs`
-- 確認テスト用のダミーアカウント（A・C）の情報は `.env.test.local`（GitHub に載らない）。チャットや記事にパスワードを書かない
+- 確認テスト用のダミーアカウント（A・C、のちに B）の情報は `.env.test.local`（GitHub に載らない）。チャットや記事にパスワードを書かない。**メールでの新規登録はできない**ので、ダミーは Supabase 管理画面の Authentication → Users →「Add user」（Auto Confirm）で作る（理由は要件定義書 付録B）
 - 家族に点数だけ見せるため、**メモ（`memos`）・印（`marks`）は `entries` と別の表**にする（RLS は行単位なので、見せたくない項目は表を分ける）
 - 招待コードはハッシュで保存し、1回限り・7日で無効
 - Supabase の管理用キー（service role key）はアカウント削除（F-17）でだけ、サーバー側で使う
@@ -50,7 +50,7 @@ npm run lint    # ESLint（flat config: eslint.config.mjs）
 
 | URL | 内容 |
 |---|---|
-| `/login` | ログイン・新規登録（Google／メール・パスワード） |
+| `/login` | Google でログイン・新規登録／メール・パスワードはログインだけ（新規登録なし）。`/auth/callback` は Google ログインの戻り先（Route Handler） |
 | `/`（`?date=YYYY-MM-DD`） | 記録：‹ 日付▾ ›（日付を押すと月カレンダー）＋スライダー（0〜100、最初は50）。記録済みの日は見るだけで「直す」で上書き・消す。「くわしく」で追加の点数・メモ・印（v1.0〜） |
 | `/graph` | 折れ線グラフ（1週間／1か月／3か月）・平均・印 |
 | `/report` | 通院用まとめ（前回の「通院」の印から今日まで） |

@@ -1,8 +1,8 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-/** ログインしていなくても開けるページ */
-const PUBLIC_PATHS = ["/login"];
+/** ログインしていなくても開けるページ（/auth/callback は Google ログインの戻り先） */
+const PUBLIC_PATHS = ["/login", "/auth/callback"];
 
 /**
  * すべてのページの前で動く処理（src/proxy.ts から呼ぶ）。

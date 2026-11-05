@@ -1,52 +1,34 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { MIN_PASSWORD_LENGTH, type AuthFormState } from "./form-state";
+import type { AuthFormState } from "./form-state";
 
 /** Supabase の英語のエラーを、やわらかい日本語に直す */
 function toJapaneseMessage(code: string | undefined): string {
   switch (code) {
     case "invalid_credentials":
       return "メールアドレスかパスワードが違います";
-    case "user_already_exists":
-    case "email_exists":
-      return "このメールアドレスはもう登録されています。上の「ログイン」に切り替えてください";
-    case "weak_password":
-      return `パスワードは${MIN_PASSWORD_LENGTH}文字以上にしてください`;
-    case "email_address_invalid":
-      return "このメールアドレスは使えません";
+    case "email_not_confirmed":
+      return "このメールアドレスは、まだ確認が済んでいません";
     case "over_request_rate_limit":
-    case "over_email_send_rate_limit":
       return "少し時間をおいてから、もう一度試してください";
     default:
       return "うまくいきませんでした。少し時間をおいてから、もう一度試してください";
   }
 }
 
-function readForm(formData: FormData) {
-  return {
-    email: String(formData.get("email") ?? "").trim(),
-    password: String(formData.get("password") ?? ""),
-  };
-}
-
-function validate(email: string, password: string): string | null {
-  if (!email || !password) return "メールアドレスとパスワードを入れてください";
-  if (password.length < MIN_PASSWORD_LENGTH) return `パスワードは${MIN_PASSWORD_LENGTH}文字以上にしてください`;
-  return null;
-}
-
-/** 「ログイン」「新規登録」どちらのボタンで送られたかを見て、振り分ける */
-export async function authenticate(prev: AuthFormState, formData: FormData): Promise<AuthFormState> {
-  return formData.get("intent") === "signup" ? signup(prev, formData) : login(prev, formData);
-}
-
-async function login(_prev: AuthFormState, formData: FormData): Promise<AuthFormState> {
-  const { email, password } = readForm(formData);
-  const invalid = validate(email, password);
-  if (invalid) return { error: invalid, email };
+/**
+ * メールアドレスとパスワードでログインする（新規登録はできない）。
+ * 新しく使う人は Google で登録する。メール・パスワードのアカウントは、確認テスト用に管理画面で作ったものだけ
+ * （メールアドレスの持ち主を確かめずに登録できると、同じアドレスの Google ログインを乗っ取る下準備ができてしまうため）
+ */
+export async function login(_prev: AuthFormState, formData: FormData): Promise<AuthFormState> {
+  const email = String(formData.get("email") ?? "").trim();
+  const password = String(formData.get("password") ?? "");
+  if (!email || !password) return { error: "メールアドレスとパスワードを入れてください", email };
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -57,22 +39,25 @@ async function login(_prev: AuthFormState, formData: FormData): Promise<AuthForm
   redirect("/");
 }
 
-async function signup(_prev: AuthFormState, formData: FormData): Promise<AuthFormState> {
-  const { email, password } = readForm(formData);
-  const invalid = validate(email, password);
-  if (invalid) return { error: invalid, email };
+/**
+ * Google でログインを始める。Supabase から Google の画面の URL をもらい、そこへ移る。
+ * 終わると Google → Supabase → アプリの /auth/callback に戻ってくる
+ */
+export async function loginWithGoogle(): Promise<void> {
+  // 戻り先は、いま開いているアドレス（localhost／MacBook-Air.local／公開後の URL）から作る。
+  // Supabase の「Redirect URLs」で許可したアドレスにしか戻らない
+  const h = await headers();
+  const origin = h.get("origin") ?? `${h.get("x-forwarded-proto") ?? "http"}://${h.get("host")}`;
 
   const supabase = await createClient();
-  const { data, error } = await supabase.auth.signUp({ email, password });
-  if (error) return { error: toJapaneseMessage(error.code), email };
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: { redirectTo: `${origin}/auth/callback` },
+  });
 
-  // 確認メールをオフにしているので、登録するとそのままログインした状態になる。
-  // 同じメールで登録し直した場合、Supabase はエラーを返さず session が空になることがある
-  if (!data.session) {
-    return { error: toJapaneseMessage("user_already_exists"), email };
+  if (error || !data.url) {
+    console.error(error);
+    redirect("/login?error=google");
   }
-
-  // ブラウザが覚えている画面を捨ててから移る（前にログインしていた人の画面が出ないように）
-  revalidatePath("/", "layout");
-  redirect("/");
+  redirect(data.url);
 }
