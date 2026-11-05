@@ -1,22 +1,43 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { recordScore } from "@/app/record-actions";
 import { formatJapaneseDate } from "@/lib/dates";
-import { useIsClient } from "@/lib/use-is-client";
 
-const INITIAL_SCORE = 50;
+type Props = {
+  date: string; // サーバーで決めた日本時間の今日（"2026-11-05"）
+  initialScore: number; // 記録済みならその点数、なければ 50
+  recorded: boolean; // その日はもう記録済みか
+};
 
-export default function ScoreRecorder() {
-  const isClient = useIsClient();
-  const [score, setScore] = useState(INITIAL_SCORE);
-  const [message, setMessage] = useState<string | null>(null);
+type Message = { kind: "ok" | "error"; text: string } | null;
+
+export default function ScoreRecorder({ date, initialScore, recorded: initiallyRecorded }: Props) {
+  const [score, setScore] = useState(initialScore);
+  const [recorded, setRecorded] = useState(initiallyRecorded);
+  const [message, setMessage] = useState<Message>(null);
+  const [pending, startTransition] = useTransition();
+
+  function handleRecord() {
+    startTransition(async () => {
+      const result = await recordScore(score);
+      if (result.ok) {
+        setRecorded(true);
+        setMessage({ kind: "ok", text: `${result.score}点で記録しました` });
+      } else {
+        setMessage({ kind: "error", text: result.error });
+      }
+    });
+  }
 
   return (
     <section className="flex flex-col gap-6">
-      {/* 今日の日付は、ブラウザで動き出してから決める（前もって作るページに古い日付が残らないように） */}
-      <h1 className="text-center text-xl font-bold min-h-7">
-        {isClient ? formatJapaneseDate(new Date()) : ""}
-      </h1>
+      <div className="flex flex-col items-center gap-1">
+        <h1 className="text-xl font-bold">{formatJapaneseDate(date)}</h1>
+        <p className="min-h-5 text-sm text-foreground/60">
+          {recorded ? "記録済みです。直すときは動かして、もう一度押してください" : ""}
+        </p>
+      </div>
 
       <p className="text-center">
         <output htmlFor="score" className="text-7xl font-bold tabular-nums text-accent">
@@ -48,14 +69,15 @@ export default function ScoreRecorder() {
 
       <button
         type="button"
-        onClick={() => setMessage(`${score}点で記録しました`)}
-        className="h-14 w-full rounded-2xl bg-accent text-lg font-bold text-white active:opacity-80"
+        onClick={handleRecord}
+        disabled={pending}
+        className="h-14 w-full rounded-2xl bg-accent text-lg font-bold text-white active:opacity-80 disabled:opacity-50"
       >
-        記録する
+        {pending ? "記録中…" : "記録する"}
       </button>
 
-      <p role="status" className="min-h-6 text-center text-accent">
-        {message}
+      <p role="status" className={`min-h-6 text-center ${message?.kind === "error" ? "text-red-700" : "text-accent"}`}>
+        {message?.text}
       </p>
     </section>
   );

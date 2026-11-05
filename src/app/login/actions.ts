@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { MIN_PASSWORD_LENGTH, type AuthFormState } from "./form-state";
@@ -51,6 +52,8 @@ async function login(_prev: AuthFormState, formData: FormData): Promise<AuthForm
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) return { error: toJapaneseMessage(error.code), email };
 
+  // ブラウザが覚えている画面を捨ててから移る（前にログインしていた人の画面が出ないように）
+  revalidatePath("/", "layout");
   redirect("/");
 }
 
@@ -69,5 +72,7 @@ async function signup(_prev: AuthFormState, formData: FormData): Promise<AuthFor
     return { error: toJapaneseMessage("user_already_exists"), email };
   }
 
+  // ブラウザが覚えている画面を捨ててから移る（前にログインしていた人の画面が出ないように）
+  revalidatePath("/", "layout");
   redirect("/");
 }

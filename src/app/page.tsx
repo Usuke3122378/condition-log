@@ -1,7 +1,11 @@
 import { Suspense } from "react";
 import ScoreRecorder from "@/components/ScoreRecorder";
 import { getCurrentUser } from "@/lib/auth";
+import { todayInTokyo } from "@/lib/dates";
+import { getEntry } from "@/lib/entries";
 import { logout } from "./actions";
+
+const DEFAULT_SCORE = 50;
 
 export default function Home() {
   return (
@@ -17,6 +21,8 @@ export default function Home() {
 async function RecordScreen() {
   // サーバー側でログインを確かめる。ログインしていなければここで /login へ移る
   const user = await getCurrentUser();
+  const today = todayInTokyo();
+  const entry = await getEntry(today);
 
   return (
     <div className="flex flex-col gap-6">
@@ -27,7 +33,13 @@ async function RecordScreen() {
           <button className="h-11 shrink-0 rounded-xl px-3 underline">ログアウト</button>
         </form>
       </div>
-      <ScoreRecorder />
+      {/* 人や日付が変わったら作り直す（前の人の点数が残らないように。課題①の反省） */}
+      <ScoreRecorder
+        key={`${user.id}:${today}`}
+        date={today}
+        initialScore={entry?.score ?? DEFAULT_SCORE}
+        recorded={entry !== null}
+      />
     </div>
   );
 }
