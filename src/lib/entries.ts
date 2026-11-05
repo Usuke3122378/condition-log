@@ -53,3 +53,12 @@ export async function saveEntry(date: string, score: number): Promise<Entry> {
   if (error) throw new Error(`記録を保存できませんでした（${error.code}）`);
   return data;
 }
+
+/** その日の自分の記録を消す */
+export async function deleteEntry(date: string): Promise<void> {
+  const user = await getCurrentUser();
+  const supabase = await createClient();
+  const { error } = await supabase.from("entries").delete().eq("user_id", user.id).eq("date", date);
+
+  if (error) throw new Error(`記録を消せませんでした（${error.code}）`);
+}

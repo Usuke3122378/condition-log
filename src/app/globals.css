@@ -19,6 +19,35 @@ body {
   font-family: var(--font-sans);
 }
 
+/* components の層に入れて、Tailwind の指定（disabled: など）の方を優先させる */
+@layer components {
+  /*
+   * 2番目のボタン（直す・やめる・‹ ›・日付）：白い地＋青緑のふち＋影で、背景からはっきり浮かせる
+   * （背景が薄い色なので、薄い塗りだけのボタンだと見分けにくかった）
+   */
+  .btn-secondary {
+    background: white;
+    color: var(--accent);
+    border: 2px solid var(--accent);
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.12);
+    font-weight: 700;
+  }
+  .btn-secondary:active {
+    background: color-mix(in srgb, var(--accent) 12%, white);
+  }
+  /* 控えめにしたいボタン（やめる）：白い地＋灰色のふち＋影 */
+  .btn-quiet {
+    background: white;
+    color: var(--foreground);
+    border: 2px solid color-mix(in srgb, var(--foreground) 30%, white);
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.12);
+    font-weight: 700;
+  }
+  .btn-quiet:active {
+    background: color-mix(in srgb, var(--foreground) 8%, white);
+  }
+}
+
 /* 点数のスライダー：指で動かしやすいよう、つまみを大きく（高さ 44px の範囲で触れる） */
 .score-slider {
   -webkit-appearance: none;

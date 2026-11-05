@@ -29,7 +29,7 @@ export default function LoginForm() {
   return (
     <div className="flex flex-col gap-5">
       {/* ログイン／新規登録の切り替え */}
-      <div role="tablist" aria-label="ログインか新規登録を選ぶ" className="grid grid-cols-2 rounded-2xl bg-accent/10 p-1">
+      <div role="tablist" aria-label="ログインか新規登録を選ぶ" className="grid grid-cols-2 rounded-2xl border-2 border-accent/40 bg-accent/15 p-1">
         {(["login", "signup"] as const).map((m) => (
           <button
             key={m}
@@ -37,7 +37,7 @@ export default function LoginForm() {
             role="tab"
             aria-selected={mode === m}
             onClick={() => setMode(m)}
-            className={`h-11 rounded-xl font-bold ${mode === m ? "bg-white text-accent shadow-sm" : "text-foreground/60"}`}
+            className={`h-11 rounded-xl font-bold ${mode === m ? "bg-white text-accent shadow" : "text-foreground/70"}`}
           >
             {m === "login" ? "ログイン" : "はじめての方（新規登録）"}
           </button>
