@@ -8,6 +8,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 うつ病（気分の波がある病気）で通院している人が、毎日の体調を 0〜100 の点数で記録し、折れ線グラフで振り返るアプリ（課題②用）。**仕様の正本は `docs/requirements.md`**。実装前に必ず読み、機能ID（F-01〜F-21）・ページ一覧・権限のルールは要件定義書に合わせる。作業の順番は付録E（S1〜S10 → v1.0 → v2.0）、権限の確認テストは付録F。
 
+公開：https://condition-log-eta.vercel.app（Vercel。GitHub の main に push すると自動で更新）／ https://github.com/Usuke3122378/condition-log。本番のサイトでは、確認用アカウントのパスワードを Claude が入力しない（ログインを伴う本番の確認はユーザーが行う）
+
 ## コマンド
 
 ```bash

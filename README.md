@@ -2,7 +2,8 @@
 
 うつ病（気分の波がある病気）で通院している人が、毎日の体調を **0〜100 の点数1つ** で記録し、**折れ線グラフ** でふり返るアプリです。
 
-- 公開 URL：（公開後に記入）
+- 公開 URL：https://condition-log-eta.vercel.app
+- プライバシーポリシー：https://condition-log-eta.vercel.app/privacy
 - 要件定義書：[docs/requirements.md](docs/requirements.md)
 
 > このアプリは記録とふり返りのための道具です。診断や治療の代わりにはなりません。
