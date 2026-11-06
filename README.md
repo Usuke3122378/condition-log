@@ -5,9 +5,18 @@
 - 公開 URL：https://condition-log-eta.vercel.app
 - プライバシーポリシー：https://condition-log-eta.vercel.app/privacy
 - 要件定義書：[docs/requirements.md](docs/requirements.md)
+- 提出記事：[docs/提出記事.md](docs/提出記事.md)
 
 > このアプリは記録とふり返りのための道具です。診断や治療の代わりにはなりません。
 > 公開しているスクリーンショット・確認用アカウントのデータは、すべてダミーです。
+
+## スクリーンショット
+
+| 記録 | 記録したあと | グラフ（1か月） | 設定 |
+|---|---|---|---|
+| ![記録](docs/screenshots/02-record-new.png) | ![記録したあと](docs/screenshots/03-record-saved.png) | ![グラフ](docs/screenshots/05-graph-month.png) | ![設定](docs/screenshots/07-settings.png) |
+
+![しくみ図](docs/screenshots/00-architecture.png)
 
 ## できること（MVP）
 
