@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Suspense } from "react";
 import { GoogleLoginButton, GoogleLoginError } from "./GoogleLogin";
 import LoginForm from "./LoginForm";
@@ -28,6 +29,9 @@ export default function LoginPage() {
       <p className="text-xs leading-relaxed text-foreground/60">
         このアプリは記録とふり返りのための道具です。診断や治療の代わりにはなりません。
         記録は、あなた本人にしか見えません。
+        <Link href="/privacy" className="ml-1 underline">
+          プライバシーポリシー
+        </Link>
       </p>
 
       {/* いちばん下に小さく。確認テスト・スクショ用のダミーアカウントだけが使う */}

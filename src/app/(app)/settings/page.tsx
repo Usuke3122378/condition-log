@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Suspense } from "react";
 import { DeleteAllButton, SampleDataButton } from "@/components/SettingsDataActions";
 import { getCurrentUser } from "@/lib/auth";
@@ -64,6 +65,9 @@ async function SettingsScreen() {
           このアプリは、記録とふり返りのための道具です。診断や治療の代わりにはなりません。
           記録は、あなた本人にしか見えません。
         </p>
+        <Link href="/privacy" className="text-sm text-accent underline">
+          プライバシーポリシー
+        </Link>
       </Card>
 
       <Card title="ためしに使う">
